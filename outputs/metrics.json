@@ -1,0 +1,320 @@
+{
+  "n_rows": 1733,
+  "date_min": "2021-11-03",
+  "date_max": "2026-10-02",
+  "n_vendors": 284,
+  "n_ransomware": 361,
+  "ransomware_share": 0.20830929024812464,
+  "n_train": 1386,
+  "n_test": 347,
+  "best_model": "Logistic Regression",
+  "test_results": [
+    {
+      "Model": "Baseline (majority class)",
+      "Accuracy": 0.7925,
+      "Precision": 0.0,
+      "Recall": 0.0,
+      "F1": 0.0,
+      "ROC-AUC": 0.5
+    },
+    {
+      "Model": "Logistic Regression",
+      "Accuracy": 0.7061,
+      "Precision": 0.3828,
+      "Recall": 0.6806,
+      "F1": 0.49,
+      "ROC-AUC": 0.7789
+    },
+    {
+      "Model": "Random Forest",
+      "Accuracy": 0.8012,
+      "Precision": 0.5366,
+      "Recall": 0.3056,
+      "F1": 0.3894,
+      "ROC-AUC": 0.7557
+    }
+  ],
+  "cv_results": [
+    {
+      "Model": "Logistic Regression",
+      "CV ROC-AUC (mean)": 0.7795,
+      "CV ROC-AUC (std)": 0.0258,
+      "CV F1 (mean)": 0.5015,
+      "CV F1 (std)": 0.0356
+    },
+    {
+      "Model": "Random Forest",
+      "CV ROC-AUC (mean)": 0.7752,
+      "CV ROC-AUC (std)": 0.0312,
+      "CV F1 (mean)": 0.3983,
+      "CV F1 (std)": 0.0307
+    }
+  ],
+  "confusion_matrix": [
+    [
+      196,
+      79
+    ],
+    [
+      23,
+      49
+    ]
+  ],
+  "per_year": {
+    "2021": 311,
+    "2022": 555,
+    "2023": 187,
+    "2024": 186,
+    "2025": 245,
+    "2026": 249
+  },
+  "top_vendors": {
+    "Microsoft": 389,
+    "Cisco": 100,
+    "Apple": 95,
+    "Adobe": 82,
+    "Google": 75,
+    "Oracle": 46,
+    "Apache": 40,
+    "Ivanti": 35,
+    "Fortinet": 31,
+    "Linux": 31
+  },
+  "top_cwe": {
+    "Unknown": 175,
+    "CWE-20": 119,
+    "CWE-78": 104,
+    "CWE-787": 92,
+    "CWE-416": 91,
+    "CWE-119": 87,
+    "CWE-22": 80,
+    "CWE-94": 68,
+    "CWE-502": 65,
+    "CWE-287": 44
+  },
+  "vendor_ransomware_rate": {
+    "QNAP": [
+      0.818,
+      11
+    ],
+    "SonicWall": [
+      0.684,
+      19
+    ],
+    "Atlassian": [
+      0.615,
+      13
+    ],
+    "Fortinet": [
+      0.452,
+      31
+    ],
+    "Palo Alto Networks": [
+      0.4,
+      15
+    ],
+    "VMware": [
+      0.346,
+      26
+    ],
+    "Ivanti": [
+      0.343,
+      35
+    ],
+    "Synacor": [
+      0.316,
+      19
+    ],
+    "Microsoft": [
+      0.301,
+      389
+    ],
+    "Oracle": [
+      0.283,
+      46
+    ]
+  },
+  "signals": {
+    "deserialization": [
+      0.375,
+      64
+    ],
+    "sql_injection": [
+      0.344,
+      32
+    ],
+    "privilege_escalation": [
+      0.303,
+      231
+    ],
+    "file_upload": [
+      0.29,
+      62
+    ],
+    "auth_bypass": [
+      0.284,
+      359
+    ],
+    "path_traversal": [
+      0.279,
+      86
+    ],
+    "internet_facing_hint": [
+      0.249,
+      289
+    ],
+    "remote_code_exec": [
+      0.231,
+      588
+    ],
+    "xss": [
+      0.156,
+      32
+    ],
+    "command_injection": [
+      0.149,
+      154
+    ],
+    "info_disclosure": [
+      0.129,
+      101
+    ],
+    "memory_corruption": [
+      0.09,
+      355
+    ],
+    "denial_of_service": [
+      0.06,
+      100
+    ]
+  },
+  "tier_thresholds": {
+    "critical": 67.67649704052828,
+    "high": 54.928043478159495,
+    "medium": 40.774789071132
+  },
+  "tier_share_ransomware": {
+    "Critical": 0.557,
+    "High": 0.332,
+    "Medium": 0.192,
+    "Low": 0.071
+  },
+  "tier_counts": {
+    "Critical": 174,
+    "High": 346,
+    "Medium": 520,
+    "Low": 693
+  },
+  "top_positive_clues": [
+    "vendorProject_SonicWall",
+    "vendorProject_QNAP",
+    "smbv1",
+    "primary_cwe_CWE-59",
+    "server",
+    "connect",
+    "mitel",
+    "esxi",
+    "allows attacker",
+    "teamcity",
+    "winrar",
+    "vmware esxi"
+  ],
+  "top_negative_clues": [
+    "vendorProject_Apple",
+    "vendorProject_Google",
+    "primary_cwe_CWE-284",
+    "primary_cwe_CWE-74",
+    "vendorProject_Cisco",
+    "users",
+    "allows remote",
+    "vendorProject_Android",
+    "primary_cwe_CWE-77",
+    "primary_cwe_CWE-78",
+    "directory traversal",
+    "vendorProject_Samsung"
+  ],
+  "top_risk": [
+    {
+      "cveID": "CVE-2025-23006",
+      "vendorProject": "SonicWall",
+      "product": "SMA1000 Appliances",
+      "risk_score": 89.9,
+      "risk_tier": "Critical",
+      "ransomware": 1
+    },
+    {
+      "cveID": "CVE-2026-15409",
+      "vendorProject": "SonicWall",
+      "product": "SMA1000 Appliances",
+      "risk_score": 89.5,
+      "risk_tier": "Critical",
+      "ransomware": 1
+    },
+    {
+      "cveID": "CVE-2026-83548",
+      "vendorProject": "SonicWall",
+      "product": "SMA1000 Appliances",
+      "risk_score": 89.2,
+      "risk_tier": "Critical",
+      "ransomware": 0
+    },
+    {
+      "cveID": "CVE-2026-19490",
+      "vendorProject": "Citrix",
+      "product": "NetScaler",
+      "risk_score": 85.2,
+      "risk_tier": "Critical",
+      "ransomware": 0
+    },
+    {
+      "cveID": "CVE-2025-40602",
+      "vendorProject": "SonicWall",
+      "product": "SMA1000 appliance",
+      "risk_score": 83.6,
+      "risk_tier": "Critical",
+      "ransomware": 0
+    },
+    {
+      "cveID": "CVE-2026-63077",
+      "vendorProject": "JetBrains",
+      "product": "TeamCity",
+      "risk_score": 82.2,
+      "risk_tier": "Critical",
+      "ransomware": 1
+    },
+    {
+      "cveID": "CVE-2023-46805",
+      "vendorProject": "Ivanti",
+      "product": "Connect Secure and Policy Secure",
+      "risk_score": 81.9,
+      "risk_tier": "Critical",
+      "ransomware": 1
+    },
+    {
+      "cveID": "CVE-2025-0108",
+      "vendorProject": "Palo Alto Networks",
+      "product": "PAN-OS",
+      "risk_score": 81.3,
+      "risk_tier": "Critical",
+      "ransomware": 0
+    },
+    {
+      "cveID": "CVE-2021-20038",
+      "vendorProject": "SonicWall",
+      "product": "SMA 100 Appliances",
+      "risk_score": 81.0,
+      "risk_tier": "Critical",
+      "ransomware": 1
+    },
+    {
+      "cveID": "CVE-2025-53770",
+      "vendorProject": "Microsoft",
+      "product": "SharePoint",
+      "risk_score": 80.4,
+      "risk_tier": "Critical",
+      "ransomware": 1
+    }
+  ],
+  "mean_days_to_remediate": 41.9930755914599,
+  "median_days_to_remediate": 21.0
+}

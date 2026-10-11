@@ -1,0 +1,21 @@
+# Virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Jupyter temporary files
+.ipynb_checkpoints/
+test_output.ipynb
+
+# Temporary test output
+CyberIntel_test.ipynb
+
+# Local environment secrets
+.env
+
+# OS/editor files
+.DS_Store
+.vscode/
