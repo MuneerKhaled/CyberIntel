@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 from pathlib import Path
@@ -22,8 +23,12 @@ if not DATA_FILE.exists():
 
 df = pd.read_csv(DATA_FILE)
 
-df["risk_score"] = pd.to_numeric(df["risk_score"], errors="coerce")
-df["ransomware"] = pd.to_numeric(df["ransomware"], errors="coerce")
+df["risk_score"] = pd.to_numeric(
+    df["risk_score"], errors="coerce"
+)
+df["ransomware"] = pd.to_numeric(
+    df["ransomware"], errors="coerce"
+)
 
 total = len(df)
 critical = (df["risk_tier"] == "Critical").sum()
@@ -31,6 +36,7 @@ high = (df["risk_tier"] == "High").sum()
 ransomware = (df["ransomware"] == 1).sum()
 
 a, b, c, d = st.columns(4)
+
 a.metric("Total Vulnerabilities", total)
 b.metric("Critical Risk", int(critical))
 c.metric("High Risk", int(high))
@@ -42,31 +48,42 @@ left, right = st.columns(2)
 
 with left:
     st.subheader("Vulnerabilities by Risk Level")
+
     counts = df["risk_tier"].value_counts()
     st.bar_chart(counts)
 
 with right:
     st.subheader("Top 10 Highest-Risk Vulnerabilities")
+
     top10 = df.nlargest(10, "risk_score")
-    st.bar_chart(top10.set_index("cveID")["risk_score"])
+
+    st.bar_chart(
+        top10.set_index("cveID")["risk_score"]
+    )
 
 st.divider()
 
 st.subheader("Search and Filter Vulnerabilities")
 
-vendors = sorted(df["vendorProject"].dropna().unique())
+vendors = sorted(
+    df["vendorProject"].dropna().unique()
+)
+
 selected_vendor = st.selectbox(
     "Filter by vendor",
     ["All Vendors"] + vendors
 )
 
 risk_levels = ["Critical", "High", "Medium", "Low"]
+
 selected_risk = st.selectbox(
     "Filter by risk level",
     ["All Risk Levels"] + risk_levels
 )
 
-search = st.text_input("Search by CVE ID, vendor, or product")
+search = st.text_input(
+    "Search by CVE ID, vendor, or product"
+)
 
 filtered = df.copy()
 
@@ -82,10 +99,19 @@ if selected_risk != "All Risk Levels":
 
 if search:
     mask = (
-        filtered["cveID"].fillna("").str.contains(search, case=False, regex=False)
-        | filtered["vendorProject"].fillna("").str.contains(search, case=False, regex=False)
-        | filtered["product"].fillna("").str.contains(search, case=False, regex=False)
+        filtered["cveID"]
+        .fillna("")
+        .str.contains(search, case=False, regex=False)
+        |
+        filtered["vendorProject"]
+        .fillna("")
+        .str.contains(search, case=False, regex=False)
+        |
+        filtered["product"]
+        .fillna("")
+        .str.contains(search, case=False, regex=False)
     )
+
     filtered = filtered[mask]
 
 st.write(f"Showing {len(filtered)} vulnerabilities")
@@ -100,7 +126,10 @@ st.dataframe(
             "risk_tier",
             "ransomware"
         ]
-    ].sort_values("risk_score", ascending=False),
+    ].sort_values(
+        "risk_score",
+        ascending=False
+    ),
     width="stretch",
     hide_index=True
 )
@@ -113,6 +142,6 @@ st.download_button(
 )
 
 st.caption(
-    "Risk scores are model-generated estimates, not guarantees of future attacks."
+    "Risk scores are model-generated estimates, "
+    "not guarantees of future attacks."
 )
-
