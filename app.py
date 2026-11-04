@@ -1,6 +1,11 @@
+
 import streamlit as st
 import pandas as pd
 from pathlib import Path
+
+# -----------------------------
+# PAGE CONFIGURATION
+# -----------------------------
 
 st.set_page_config(
     page_title="CyberIntel Dashboard",
@@ -8,65 +13,119 @@ st.set_page_config(
     layout="wide"
 )
 
+# -----------------------------
+# HEADER
+# -----------------------------
+
 st.title("🛡️ CyberIntel")
 st.subheader("Cybersecurity Threat Intelligence Dashboard")
+
 st.write(
-    "Analyze known security vulnerabilities and explore their estimated risk."
+    "Analyze known security vulnerabilities "
+    "and explore their estimated risk levels."
 )
+
+st.divider()
+
+# -----------------------------
+# LOAD DATA
+# -----------------------------
 
 DATA_FILE = Path("outputs/risk_scored_vulnerabilities.csv")
 
 if not DATA_FILE.exists():
-    st.error("Risk data not found. Run the notebook first.")
+    st.error("Risk data not found. Please run the notebook first.")
     st.stop()
 
-df = pd.read_csv(DATA_FILE)
+@st.cache_data
+def load_data(file_path):
+    return pd.read_csv(file_path)
 
-df["risk_score"] = pd.to_numeric(df["risk_score"], errors="coerce")
-df["ransomware"] = pd.to_numeric(df["ransomware"], errors="coerce")
+df = load_data(DATA_FILE)
+
+# -----------------------------
+# DATA CLEANING
+# -----------------------------
+
+df["risk_score"] = pd.to_numeric(
+    df["risk_score"], errors="coerce"
+)
+
+df["ransomware"] = pd.to_numeric(
+    df["ransomware"], errors="coerce"
+)
+
+df["risk_tier"] = df["risk_tier"].fillna("Unknown")
+
+for column in ["cveID", "vendorProject", "product"]:
+    df[column] = df[column].fillna("Unknown").astype(str)
+
+# -----------------------------
+# KEY METRICS
+# -----------------------------
 
 total = len(df)
+
 critical = (df["risk_tier"] == "Critical").sum()
 high = (df["risk_tier"] == "High").sum()
 ransomware = (df["ransomware"] == 1).sum()
 
-a, b, c, d = st.columns(4)
-a.metric("Total Vulnerabilities", total)
-b.metric("Critical Risk", int(critical))
-c.metric("High Risk", int(high))
-d.metric("Ransomware-Related", int(ransomware))
+col1, col2, col3, col4 = st.columns(4)
+
+col1.metric("Total Vulnerabilities", f"{total:,}")
+col2.metric("Critical Risk", f"{critical:,}")
+col3.metric("High Risk", f"{high:,}")
+col4.metric("Ransomware-Related", f"{ransomware:,}")
 
 st.divider()
+
+# -----------------------------
+# DATA VISUALIZATION
+# -----------------------------
 
 left, right = st.columns(2)
 
 with left:
     st.subheader("Vulnerabilities by Risk Level")
-    counts = df["risk_tier"].value_counts()
-    st.bar_chart(counts)
+
+    risk_counts = df["risk_tier"].value_counts()
+
+    st.bar_chart(risk_counts)
 
 with right:
     st.subheader("Top 10 Highest-Risk Vulnerabilities")
+
     top10 = df.nlargest(10, "risk_score")
-    st.bar_chart(top10.set_index("cveID")["risk_score"])
+
+    st.bar_chart(
+        top10.set_index("cveID")["risk_score"]
+    )
 
 st.divider()
 
-st.subheader("Search and Filter Vulnerabilities")
+# -----------------------------
+# SEARCH AND FILTER
+# -----------------------------
 
-vendors = sorted(df["vendorProject"].dropna().unique())
+st.subheader("🔍 Search and Filter Vulnerabilities")
+
+vendors = sorted(df["vendorProject"].unique())
+
 selected_vendor = st.selectbox(
-    "Filter by vendor",
+    "Filter by Vendor",
     ["All Vendors"] + vendors
 )
 
 risk_levels = ["Critical", "High", "Medium", "Low"]
+
 selected_risk = st.selectbox(
-    "Filter by risk level",
+    "Filter by Risk Level",
     ["All Risk Levels"] + risk_levels
 )
 
-search = st.text_input("Search by CVE ID, vendor, or product")
+search = st.text_input(
+    "Search by CVE ID, Vendor, or Product"
+)
 
 filtered = df.copy()
 
@@ -82,37 +141,65 @@ if selected_risk != "All Risk Levels":
 
 if search:
     mask = (
-        filtered["cveID"].fillna("").str.contains(search, case=False, regex=False)
-        | filtered["vendorProject"].fillna("").str.contains(search, case=False, regex=False)
-        | filtered["product"].fillna("").str.contains(search, case=False, regex=False)
+        filtered["cveID"].str.contains(
+            search, case=False, regex=False
+        )
+        | filtered["vendorProject"].str.contains(
+            search, case=False, regex=False
+        )
+        | filtered["product"].str.contains(
+            search, case=False, regex=False
+        )
     )
+
     filtered = filtered[mask]
 
-st.write(f"Showing {len(filtered)} vulnerabilities")
+# -----------------------------
+# RESULTS TABLE
+# -----------------------------
+
+st.write(f"Showing {len(filtered):,} vulnerabilities")
+
+display_columns = [
+    "cveID",
+    "vendorProject",
+    "product",
+    "risk_score",
+    "risk_tier",
+    "ransomware"
+]
 
 st.dataframe(
-    filtered[
-        [
-            "cveID",
-            "vendorProject",
-            "product",
-            "risk_score",
-            "risk_tier",
-            "ransomware"
-        ]
-    ].sort_values("risk_score", ascending=False),
+    filtered[display_columns].sort_values(
+        "risk_score",
+        ascending=False
+    ),
     width="stretch",
     hide_index=True
 )
 
+# -----------------------------
+# DOWNLOAD RESULTS
+# -----------------------------
+
 st.download_button(
-    "Download Filtered Results",
+    label="📥 Download Filtered Results",
     data=filtered.to_csv(index=False).encode("utf-8"),
     file_name="cyberintel_filtered_results.csv",
     mime="text/csv"
 )
 
+# -----------------------------
+# FOOTER
+# -----------------------------
+
+st.divider()
+
 st.caption(
-    "Risk scores are model-generated estimates, not guarantees of future attacks."
+    "CyberIntel | Cybersecurity Threat Intelligence Dashboard"
 )
 
+st.caption(
+    "Risk scores are model-generated estimates, "
+    "not guarantees of future attacks."
+)
